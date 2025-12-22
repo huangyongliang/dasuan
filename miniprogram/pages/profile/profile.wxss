@@ -1,0 +1,95 @@
+/* pages/profile/profile.wxss */
+.container {
+  min-height: 100vh;
+  background: #f6f6f6;
+  padding-bottom: 50rpx;
+}
+
+.user-info {
+  background: #fff;
+  padding: 50rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 1rpx solid #eee;
+}
+
+.avatar-container {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+
+.nickname {
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.role-tag {
+  font-size: 24rpx;
+  color: #999;
+  background: #f0f0f0;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.section-title {
+  padding: 30rpx 30rpx 10rpx;
+  font-size: 28rpx;
+  color: #666;
+  font-weight: bold;
+}
+
+.audit-list {
+  background: #fff;
+  margin-top: 20rpx;
+}
+
+.audit-item {
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.audit-content {
+  font-size: 30rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.audit-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.audit-action {
+  margin-top: 15rpx;
+  align-self: flex-end;
+  color: #07c160;
+  font-size: 26rpx;
+  border: 1rpx solid #07c160;
+  padding: 4rpx 12rpx;
+  border-radius: 6rpx;
+}
+
+.empty-tip {
+  padding: 50rpx;
+  text-align: center;
+  color: #ccc;
+  font-size: 28rpx;
+}
+
+.about-section {
+  margin-top: 100rpx;
+  text-align: center;
+  color: #ddd;
+  font-size: 24rpx;
+}

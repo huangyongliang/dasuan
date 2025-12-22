@@ -1,0 +1,20 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">加载中...</view>
+  
+  <view wx:elif="{{notes.length === 0}}" class="empty">
+    <text>没有笔记，去新建一个吧！</text>
+  </view>
+
+  <view wx:else class="note-list">
+    <block wx:for="{{notes}}" wx:key="_id">
+      <view class="note-card" bindtap="gotoEdit" data-id="{{item._id}}">
+        <view class="note-content">{{item.content}}</view>
+        <view class="note-footer">
+          <text class="status status-{{item.status}}">{{item.status === 'published' ? '已发布' : (item.status === 'pending' ? '审核中' : '草稿')}}</text>
+          <text class="time">{{item.createTime}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+</view>

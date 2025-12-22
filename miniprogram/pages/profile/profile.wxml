@@ -1,0 +1,33 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <view class="user-info">
+    <view class="avatar-container">
+      <open-data type="userAvatarUrl"></open-data>
+    </view>
+    <view class="nickname">
+      <open-data type="userNickName"></open-data>
+    </view>
+    <view class="role-tag" bindtap="toggleAdmin">
+      {{isAdmin ? '管理员 (点击切换)' : '普通用户 (点击切换)'}}
+    </view>
+  </view>
+
+  <view class="section-title" wx:if="{{isAdmin}}">待审核笔记</view>
+  
+  <view class="audit-list" wx:if="{{isAdmin}}">
+    <block wx:if="{{pendingNotes.length === 0}}">
+      <view class="empty-tip">暂无待审核内容</view>
+    </block>
+    <block wx:else>
+      <view class="audit-item" wx:for="{{pendingNotes}}" wx:key="_id" bindtap="auditNote" data-id="{{item._id}}" data-index="{{index}}">
+        <view class="audit-content">{{item.content}}</view>
+        <view class="audit-time">{{item.createTime}}</view>
+        <view class="audit-action">点击审核</view>
+      </view>
+    </block>
+  </view>
+
+  <view class="about-section">
+    <text>大蒜助手 v1.0.0</text>
+  </view>
+</view>
