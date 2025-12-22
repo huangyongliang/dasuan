@@ -4,7 +4,8 @@ const app = getApp()
 Page({
   data: {
     isAdmin: false,
-    pendingNotes: []
+    pendingNotes: [],
+    openid: ''
   },
 
   onShow: function() {
@@ -14,6 +15,31 @@ Page({
       })
     }
     this.checkAdmin();
+    this.getOpenId();
+  },
+
+  getOpenId: function() {
+    // 检查缓存或请求云函数获取 openid
+    if (this.data.openid) return;
+    
+    wx.cloud.callFunction({
+      name: 'login',
+      success: res => {
+        if (res.result && res.result.openid) {
+          this.setData({ openid: res.result.openid });
+        }
+      },
+      fail: console.error
+    });
+  },
+
+  copyOpenId: function() {
+    wx.setClipboardData({
+      data: this.data.openid,
+      success: () => {
+        wx.showToast({ title: 'OpenID 已复制' });
+      }
+    });
   },
 
   checkAdmin: function() {
@@ -86,11 +112,26 @@ Page({
   auditNote: function(e) {
     const id = e.currentTarget.dataset.id;
     const index = e.currentTarget.dataset.index;
+    const item = this.data.pendingNotes[index];
+
+    const isDeleteRequest = item.status === 'pending_delete';
+    
+    let itemList = ['通过', '驳回'];
+    if (isDeleteRequest) {
+      itemList = ['确认删除', '拒绝删除 (保留)'];
+    }
 
     wx.showActionSheet({
-      itemList: ['通过', '驳回'],
+      itemList: itemList,
       success: res => {
-        const newStatus = res.tapIndex === 0 ? 'published' : 'rejected';
+        let newStatus;
+        if (isDeleteRequest) {
+           // 0: 确认删除 -> deleted (逻辑上会触发物理删除), 1: 拒绝 -> published (恢复原状)
+           newStatus = res.tapIndex === 0 ? 'deleted' : 'published';
+        } else {
+           // 0: 通过 -> published, 1: 驳回 -> rejected
+           newStatus = res.tapIndex === 0 ? 'published' : 'rejected';
+        }
         this.updateStatus(id, newStatus);
       }
     });

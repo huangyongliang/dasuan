@@ -1,20 +1,59 @@
 <!--pages/index/index.wxml-->
 <view class="container">
-  <view wx:if="{{loading}}" class="loading">加载中...</view>
-  
-  <view wx:elif="{{notes.length === 0}}" class="empty">
-    <text>没有笔记，去新建一个吧！</text>
+  <!-- 顶部 Tab 切换 -->
+  <view class="tab-header">
+    <view class="tab-item {{currentTab === 'my' ? 'active' : ''}}" bindtap="switchTab" data-tab="my">我的笔记</view>
+    <view class="tab-item {{currentTab === 'square' ? 'active' : ''}}" bindtap="switchTab" data-tab="square">公开广场</view>
+    <view class="tab-item {{currentTab === 'shout' ? 'active' : ''}}" bindtap="switchTab" data-tab="shout">广场大喊</view>
   </view>
 
-  <view wx:else class="note-list">
-    <block wx:for="{{notes}}" wx:key="_id">
-      <view class="note-card" bindtap="gotoEdit" data-id="{{item._id}}">
-        <view class="note-content">{{item.content}}</view>
-        <view class="note-footer">
-          <text class="status status-{{item.status}}">{{item.status === 'published' ? '已发布' : (item.status === 'pending' ? '审核中' : '草稿')}}</text>
-          <text class="time">{{item.createTime}}</text>
+  <!-- 广场大喊 (聊天室) -->
+  <view wx:if="{{currentTab === 'shout'}}" class="shout-container">
+    <scroll-view class="chat-list" scroll-y scroll-into-view="{{scrollIntoView}}" scroll-with-animation>
+      <view class="chat-tip">欢迎来到广场大喊！这里是匿名聊天室，消息即发即送，不保存历史记录。</view>
+      <block wx:for="{{chatList}}" wx:key="_id">
+        <view class="chat-item {{item.isMy ? 'my-chat' : ''}}" id="chat-{{index}}">
+           <view class="chat-avatar">蒜</view>
+           <view class="chat-bubble">
+             <view class="chat-nick">大蒜</view>
+             <text class="chat-text">{{item.content}}</text>
+           </view>
         </view>
-      </view>
-    </block>
+      </block>
+      <view id="scroll-bottom"></view>
+    </scroll-view>
+    
+    <view class="chat-input-area">
+      <input class="chat-input" placeholder="大喊一声..." value="{{chatInput}}" bindinput="onChatInput" bindconfirm="sendChat" confirm-type="send"/>
+      <view class="send-btn" bindtap="sendChat">发送</view>
+    </view>
   </view>
+
+  <!-- 笔记列表 (仅在非 shout 模式下显示) -->
+  <block wx:else>
+    <view wx:if="{{loading}}" class="loading">加载中...</view>
+    
+    <view wx:elif="{{notes.length === 0}}" class="empty">
+      <text>{{currentTab === 'my' ? '没有笔记，去新建一个吧！' : '广场空空如也~'}}</text>
+    </view>
+
+    <view wx:else class="note-list">
+      <block wx:for="{{notes}}" wx:key="_id">
+        <view class="note-card" bindtap="gotoDetail" data-id="{{item._id}}">
+          <view class="note-content">{{item.content}}</view>
+          <view class="note-footer">
+            <block wx:if="{{currentTab === 'my'}}">
+              <text class="status status-{{item.status}}">{{item.status === 'published' ? '已发布' : (item.status === 'pending' ? '审核中' : '草稿')}}</text>
+              <text class="visibility">{{item.visibility === 'public' ? '公开' : '私有'}}</text>
+            </block>
+            <block wx:else>
+              <!-- 广场模式下不显示状态，因为都是已发布的 -->
+              <text class="author">用户***</text> 
+            </block>
+            <text class="time">{{item.createTime}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </block>
 </view>

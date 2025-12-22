@@ -13,7 +13,22 @@ App({
     }
 
     this.globalData = {
-      isAdmin: false // 将在 profile 页面进行逻辑判断
+      isAdmin: false, // 将在 profile 页面进行逻辑判断
+      openid: null
     };
+
+    // 获取 OpenID
+    wx.cloud.callFunction({
+      name: 'login',
+      success: res => {
+        this.globalData.openid = res.result.openid;
+        if (this.openidCallback) {
+          this.openidCallback(res.result.openid);
+        }
+      },
+      fail: err => {
+        console.error('登录失败', err);
+      }
+    });
   }
 });

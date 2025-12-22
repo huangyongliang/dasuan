@@ -8,6 +8,7 @@ Page({
     images: [], // store fileIDs
     tempImages: [], // store local paths for display
     status: 'draft',
+    visibility: 'private',
     wordCount: 0
   },
 
@@ -24,6 +25,26 @@ Page({
         selected: 1
       })
     }
+
+    // 检查是否有待编辑的笔记 ID (从详情页跳转过来)
+    const app = getApp();
+    if (app.globalData.editNoteId) {
+      const id = app.globalData.editNoteId;
+      // 清除标记，防止重复加载
+      app.globalData.editNoteId = null;
+      
+      this.setData({ id: id });
+      this.loadNote(id);
+    } else {
+      // 如果没有 ID，且当前没有内容（或是刚提交完），可以考虑重置表单
+      // 这里暂不强制重置，以免用户误触 Tab 导致草稿丢失
+      // 但如果 id 存在（说明之前在编辑模式），现在切回来了，是否要清空？
+      // 为了逻辑简单，如果是从 TabBar 直接点击进来的，通常期望是新笔记。
+      // 但为了体验，我们只在 id 存在且没有 globalData 时（说明是手动切回来的），不乱动。
+      // 或者，我们可以每次进入都重置？不，那样体验不好。
+      // 策略：只有明确传递了 null 或者 switchTab 且非编辑模式时...
+      // 暂时保持现状，只处理 editNoteId 存在的情况。
+    }
   },
 
   loadNote: function(id) {
@@ -36,6 +57,7 @@ Page({
           images: res.data.images || [],
           tempImages: res.data.images || [],
           status: res.data.status,
+          visibility: res.data.visibility || 'private',
           wordCount: (res.data.content || '').length
         });
         wx.hideLoading();
@@ -53,6 +75,13 @@ Page({
     this.setData({
       content: val,
       wordCount: val.length
+    });
+  },
+
+  changeVisibility: function(e) {
+    const val = e.currentTarget.dataset.value;
+    this.setData({
+      visibility: val
     });
   },
 
@@ -119,42 +148,37 @@ Page({
     }
 
     wx.showLoading({ title: isPublish ? '提交中...' : '保存中...' });
-    const db = wx.cloud.database();
-    const data = {
-      content: this.data.content,
-      images: this.data.images,
-      status: status,
-      updateTime: new Date()
-    };
-
-    if (this.data.id) {
-      db.collection('notes').doc(this.data.id).update({
-        data: data,
-        success: res => {
-          wx.hideLoading();
+    
+    // 调用云函数进行保存（包含限制检查）
+    wx.cloud.callFunction({
+      name: 'note',
+      data: {
+        action: this.data.id ? 'update' : 'create',
+        data: {
+          id: this.data.id,
+          content: this.data.content,
+          images: this.data.images,
+          status: status,
+          visibility: this.data.visibility
+        }
+      },
+      success: res => {
+        wx.hideLoading();
+        if (res.result && res.result.code === 200) {
           wx.showToast({ title: isPublish ? '已提交审核' : '保存成功' });
           if(isPublish) setTimeout(() => wx.navigateBack(), 1500);
-        },
-        fail: err => {
-          wx.hideLoading();
+        } else if (res.result && res.result.code === 429) {
+          wx.showToast({ title: res.result.msg, icon: 'none', duration: 3000 });
+        } else {
           wx.showToast({ title: '操作失败', icon: 'none' });
+          console.error('Save failed', res);
         }
-      });
-    } else {
-      data.createTime = new Date();
-      db.collection('notes').add({
-        data: data,
-        success: res => {
-          wx.hideLoading();
-          this.setData({ id: res._id });
-          wx.showToast({ title: isPublish ? '已提交审核' : '保存成功' });
-          if(isPublish) setTimeout(() => wx.navigateBack(), 1500);
-        },
-        fail: err => {
-          wx.hideLoading();
-          wx.showToast({ title: '操作失败', icon: 'none' });
-        }
-      });
-    }
+      },
+      fail: err => {
+        wx.hideLoading();
+        console.error('Call Function Failed', err);
+        wx.showToast({ title: '网络错误', icon: 'none' });
+      }
+    });
   }
 });

@@ -12,11 +12,13 @@
 
   <view class="footer-info">
     <text class="time">创建于: {{note.createTime}}</text>
-    <text class="status status-{{note.status}}">{{note.status === 'published' ? '已发布' : (note.status === 'pending' ? '审核中' : '草稿')}}</text>
+    <text class="status status-{{note.status}}">{{note.status === 'published' ? '已发布' : (note.status === 'pending' ? '审核中' : (note.status === 'pending_delete' ? '删除审核中' : '草稿'))}}</text>
   </view>
 
   <view class="action-bar">
-    <button class="edit-btn" bindtap="gotoEdit">编辑笔记</button>
+    <button class="btn edit-btn" bindtap="gotoEdit" wx:if="{{note.status !== 'pending_delete'}}">编辑</button>
+    <button class="btn delete-btn" bindtap="deleteNote" wx:if="{{note.status !== 'pending_delete'}}">删除</button>
+    <view class="pending-tip" wx:if="{{note.status === 'pending_delete'}}">删除申请已提交，请等待管理员审核</view>
   </view>
 </view>
 <view wx:else class="loading-view">

@@ -10,8 +10,8 @@ page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* 关键修复：覆盖 app.wxss 的 align-items: center，防止宽度塌陷 */
-  width: 100vw; /* 显式设置宽度 */
+  align-items: stretch;
+  width: 100vw;
 }
 
 .input-area {
@@ -20,7 +20,7 @@ page {
   flex-direction: column;
   padding: 30rpx;
   box-sizing: border-box;
-  width: 100%; /* 确保宽度撑满 */
+  width: 100%;
 }
 
 .content-input {
@@ -29,7 +29,7 @@ page {
   font-size: 34rpx;
   line-height: 1.6;
   color: #333;
-  padding: 0; /* 移除默认 padding */
+  padding: 0;
 }
 
 .word-count {
@@ -43,8 +43,48 @@ page {
   padding: 20rpx 30rpx;
   background: #fff;
   border-top: 1rpx solid #f5f5f5;
-  width: 100%; /* 确保宽度撑满 */
+  width: 100%;
   box-sizing: border-box;
+}
+
+.settings-area {
+  padding: 20rpx 30rpx;
+  background: #fff;
+  border-top: 1rpx solid #f5f5f5;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.setting-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.visibility-options {
+  display: flex;
+  background: #f0f0f0;
+  border-radius: 8rpx;
+  padding: 4rpx;
+}
+
+.option {
+  font-size: 26rpx;
+  padding: 8rpx 24rpx;
+  color: #999;
+  border-radius: 6rpx;
+}
+
+.option.active {
+  background: #fff;
+  color: #07c160;
+  font-weight: 500;
+  box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.05);
 }
 
 .section-title {
@@ -108,16 +148,16 @@ page {
 }
 
 .footer-placeholder {
-  height: calc(120rpx + 60px + env(safe-area-inset-bottom)); /* 增加占位高度：原有高度 + TabBar 高度 */
+  height: calc(120rpx + 60px + env(safe-area-inset-bottom));
   flex-shrink: 0;
 }
 
 .footer-bar {
   position: fixed;
-  bottom: calc(60px + env(safe-area-inset-bottom)); /* 抬升高度：TabBar 高度 + 安全距离 */
+  bottom: calc(60px + env(safe-area-inset-bottom));
   left: 0;
   right: 0;
-  padding: 20rpx 30rpx; /* 移除底部的 safe-area padding，因为已经抬升了 */
+  padding: 20rpx 30rpx;
   background: #fff;
   border-top: 1rpx solid #eee;
   display: flex;

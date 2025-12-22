@@ -13,7 +13,7 @@
     <view class="word-count">{{wordCount}} 字</view>
   </view>
 
-  <!-- 图片区域：底部跟随 -->
+  <!-- 图片区域 -->
   <view class="attachment-area">
     <view class="section-title" wx:if="{{tempImages.length > 0}}">图片附件 ({{tempImages.length}}/9)</view>
     <view class="image-list">
@@ -25,6 +25,17 @@
       </block>
       <view class="add-btn" bindtap="chooseImage" wx:if="{{tempImages.length < 9}}">
         <text class="add-icon">+</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 可见性设置 -->
+  <view class="settings-area">
+    <view class="setting-item">
+      <text class="setting-label">谁可以看</text>
+      <view class="visibility-options">
+        <view class="option {{visibility === 'private' ? 'active' : ''}}" bindtap="changeVisibility" data-value="private">仅自己</view>
+        <view class="option {{visibility === 'public' ? 'active' : ''}}" bindtap="changeVisibility" data-value="public">所有人</view>
       </view>
     </view>
   </view>

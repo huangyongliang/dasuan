@@ -68,13 +68,36 @@ page {
   background: #fff;
   border-top: 1rpx solid #eee;
   box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.btn {
+  flex: 1;
+  border-radius: 44rpx;
+  font-weight: 500;
+  font-size: 30rpx;
+  height: 88rpx;
+  line-height: 88rpx;
 }
 
 .edit-btn {
-  background: #07c160;
+  background: #f0f0f0;
+  color: #333;
+}
+
+.delete-btn {
+  background: #ff4d4f;
   color: #fff;
-  border-radius: 44rpx;
-  font-weight: 500;
+}
+
+.pending-tip {
+  width: 100%;
+  text-align: center;
+  color: #999;
+  font-size: 28rpx;
+  line-height: 88rpx;
 }
 
 .loading-view {

@@ -28,6 +28,30 @@
   margin-bottom: 10rpx;
 }
 
+.openid-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+  font-size: 24rpx;
+  color: #999;
+  background: #f8f8f8;
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+.openid-text {
+  max-width: 300rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 10rpx;
+}
+
+.copy-btn {
+  color: #07c160;
+  margin-left: 10rpx;
+}
+
 .role-tag {
   font-size: 24rpx;
   color: #999;

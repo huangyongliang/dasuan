@@ -7,6 +7,10 @@
     <view class="nickname">
       <open-data type="userNickName"></open-data>
     </view>
+    <view class="openid-row" wx:if="{{openid}}" bindtap="copyOpenId">
+      <text class="openid-text">ID: {{openid}}</text>
+      <text class="copy-btn">复制</text>
+    </view>
     <view class="role-tag" wx:if="{{isAdmin}}">
       管理员
     </view>
@@ -20,9 +24,12 @@
     </block>
     <block wx:else>
       <view class="audit-item" wx:for="{{pendingNotes}}" wx:key="_id" bindtap="auditNote" data-id="{{item._id}}" data-index="{{index}}">
-        <view class="audit-content">{{item.content}}</view>
+        <view class="audit-content">
+          <text wx:if="{{item.status === 'pending_delete'}}" style="color:red; font-weight:bold;">[申请删除] </text>
+          {{item.content}}
+        </view>
         <view class="audit-time">{{item.createTime}}</view>
-        <view class="audit-action">点击审核</view>
+        <view class="audit-action">{{item.status === 'pending_delete' ? '审核删除' : '审核发布'}}</view>
       </view>
     </block>
   </view>
