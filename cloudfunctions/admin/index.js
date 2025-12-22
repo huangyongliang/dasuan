@@ -12,11 +12,17 @@ exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const { action, noteId, status } = event
 
-  // 简单的管理员鉴权：实际项目中应检查 openid 是否在管理员列表中
-  // const ADMIN_IDS = ['YOUR_ADMIN_OPENID'];
-  // if (!ADMIN_IDS.includes(wxContext.OPENID)) {
-  //   return { code: 403, msg: 'Permission denied' }
-  // }
+  // 管理员鉴权：只有特定 openid 才能执行
+  // 这里的 openid 是之前您报错信息中提供的 'o6zAJs9ZC98oUo-1vrL1JF08FDcE'
+  const ADMIN_IDS = ['o6zAJs9ZC98oUo-1vrL1JF08FDcE']; 
+  
+  if (!ADMIN_IDS.includes(wxContext.OPENID)) {
+    return { code: 403, msg: 'Permission denied: Not an admin', isAdmin: false }
+  }
+
+  if (action === 'checkAdmin') {
+    return { code: 200, isAdmin: true }
+  }
 
   if (action === 'getPending') {
     return await db.collection('notes')

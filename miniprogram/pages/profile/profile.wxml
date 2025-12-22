@@ -7,8 +7,8 @@
     <view class="nickname">
       <open-data type="userNickName"></open-data>
     </view>
-    <view class="role-tag" bindtap="toggleAdmin">
-      {{isAdmin ? '管理员 (点击切换)' : '普通用户 (点击切换)'}}
+    <view class="role-tag" wx:if="{{isAdmin}}">
+      管理员
     </view>
   </view>
 

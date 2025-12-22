@@ -54,7 +54,7 @@ Page({
   gotoEdit: function(e) {
     const id = e.currentTarget.dataset.id;
     wx.navigateTo({
-      url: '../editor/editor?id=' + id,
+      url: '../detail/detail?id=' + id,
     });
   }
 });

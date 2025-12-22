@@ -17,33 +17,34 @@ Page({
   },
 
   checkAdmin: function() {
-    // 模拟管理员检查
-    // 在实际生产中，这里应该调用云函数判断 openid 是否在管理员列表中
-    // 为了演示，我们暂时通过一个隐藏操作或默认为 false，
-    // 这里我们添加一个 toggleAdmin 方法供演示使用
-    this.setData({
-      isAdmin: app.globalData.isAdmin
-    });
+    wx.showLoading({ title: '检查权限' });
+    wx.cloud.callFunction({
+      name: 'admin',
+      data: {
+        action: 'checkAdmin'
+      },
+      success: res => {
+        wx.hideLoading();
+        const isAdmin = res.result && res.result.isAdmin;
+        this.setData({
+          isAdmin: isAdmin
+        });
+        app.globalData.isAdmin = isAdmin;
 
-    if (app.globalData.isAdmin) {
-      this.getPendingNotes();
-    }
-  },
-
-  // 演示用：切换管理员身份
-  toggleAdmin: function() {
-    app.globalData.isAdmin = !app.globalData.isAdmin;
-    this.setData({ isAdmin: app.globalData.isAdmin });
-    if (app.globalData.isAdmin) {
-      this.getPendingNotes();
-    } else {
-      this.setData({ pendingNotes: [] });
-    }
-    wx.showToast({
-      title: app.globalData.isAdmin ? '已切换为管理员' : '已切换为普通用户',
-      icon: 'none'
+        if (isAdmin) {
+          this.getPendingNotes();
+        }
+      },
+      fail: err => {
+        wx.hideLoading();
+        console.error('管理员权限检查失败', err);
+        this.setData({ isAdmin: false });
+      }
     });
   },
+
+  // 已移除 toggleAdmin 方法，不再允许手动切换
+
 
   getPendingNotes: function() {
     // 优先尝试云函数（可读取所有人的待审核笔记）

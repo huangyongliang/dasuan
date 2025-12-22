@@ -1,0 +1,24 @@
+<!--pages/detail/detail.wxml-->
+<view class="container" wx:if="{{note}}">
+  <view class="note-content">
+    <text user-select="true" class="text-content">{{note.content}}</text>
+  </view>
+
+  <view class="image-list" wx:if="{{note.images && note.images.length > 0}}">
+    <block wx:for="{{note.images}}" wx:key="*this">
+      <image src="{{item}}" mode="widthFix" class="note-image" bindtap="previewImage" data-url="{{item}}"></image>
+    </block>
+  </view>
+
+  <view class="footer-info">
+    <text class="time">创建于: {{note.createTime}}</text>
+    <text class="status status-{{note.status}}">{{note.status === 'published' ? '已发布' : (note.status === 'pending' ? '审核中' : '草稿')}}</text>
+  </view>
+
+  <view class="action-bar">
+    <button class="edit-btn" bindtap="gotoEdit">编辑笔记</button>
+  </view>
+</view>
+<view wx:else class="loading-view">
+  <text>加载中...</text>
+</view>
