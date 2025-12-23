@@ -31,9 +31,114 @@ exports.main = async (event, context) => {
     return await getPublicNotes()
   }
 
+  if (action === 'getDetail') {
+    return await getNoteDetail(openid, data)
+  }
+
+  // --- Comment Actions ---
+  if (action === 'addComment') {
+    return await addComment(openid, data)
+  }
+  if (action === 'getComments') {
+    return await getComments(openid, data)
+  }
+  if (action === 'deleteComment') {
+    return await deleteComment(openid, data)
+  }
+
   return {
     code: 400,
     msg: 'Unknown action'
+  }
+}
+
+// --- Comment Functions ---
+
+async function checkIsAdmin(openid) {
+  const count = await db.collection('admins').where({ openid }).count()
+  return count.total > 0
+}
+
+async function addComment(openid, { noteId, content }) {
+  if (!noteId || !content) return { code: 400, msg: 'Missing params' }
+  
+  try {
+    const res = await db.collection('comments').add({
+      data: {
+        noteId,
+        content,
+        createTime: db.serverDate(),
+        _openid: openid
+      }
+    })
+    return { code: 200, data: res, msg: 'Comment added' }
+  } catch (e) {
+    return { code: 500, msg: 'Error adding comment', error: e }
+  }
+}
+
+async function getComments(openid, { noteId }) {
+  if (!noteId) return { code: 400, msg: 'Missing noteId' }
+
+  try {
+    const res = await db.collection('comments')
+      .where({ noteId })
+      .orderBy('createTime', 'asc') // 评论按时间正序
+      .get()
+    
+    const isAdmin = await checkIsAdmin(openid)
+
+    return { 
+      code: 200, 
+      data: res.data, 
+      isAdmin: isAdmin, // 返回管理员身份，用于前端显示删除按钮
+      currentOpenId: openid // 返回当前用户ID，用于判断自己评论
+    }
+  } catch (e) {
+    return { code: 500, msg: 'Error fetching comments', error: e }
+  }
+}
+
+async function deleteComment(openid, { commentId }) {
+  if (!commentId) return { code: 400, msg: 'Missing commentId' }
+
+  try {
+    const commentRes = await db.collection('comments').doc(commentId).get()
+    const comment = commentRes.data
+    const isAdmin = await checkIsAdmin(openid)
+
+    // 允许删除的条件：是自己的评论 OR 是管理员
+    if (comment._openid === openid || isAdmin) {
+      await db.collection('comments').doc(commentId).remove()
+      return { code: 200, msg: 'Comment deleted' }
+    } else {
+      return { code: 403, msg: 'Permission denied' }
+    }
+  } catch (e) {
+    return { code: 500, msg: 'Error deleting comment', error: e }
+  }
+}
+
+async function getNoteDetail(openid, { id }) {
+  if (!id) return { code: 400, msg: 'Missing ID' }
+
+  try {
+    const res = await db.collection('notes').doc(id).get()
+    const note = res.data
+
+    // 权限检查：
+    // 1. 自己的笔记 -> 允许
+    // 2. 公开且已发布的笔记 -> 允许
+    const isOwner = note._openid === openid
+    const isPublicPublished = note.visibility === 'public' && note.status === 'published'
+
+    if (isOwner || isPublicPublished) {
+      return { code: 200, data: note, isOwner: isOwner }
+    } else {
+      return { code: 403, msg: 'Permission denied: Private note' }
+    }
+  } catch (e) {
+    return { code: 500, msg: 'Fetch Error', error: e }
   }
 }
 
@@ -64,8 +169,17 @@ async function handleDelete(openid, { id }) {
       })
       return { code: 202, msg: '删除请求已提交，需管理员审核' }
     } else {
-      // 直接物理删除（或标记删除，这里演示物理删除）
+      // 直接物理删除
       await db.collection('notes').doc(id).remove()
+      
+      // 级联删除：删除该笔记下的所有评论
+      try {
+        await db.collection('comments').where({ noteId: id }).remove()
+      } catch (e) {
+        console.error('Failed to delete associated comments', e)
+        // 不阻断主流程
+      }
+
       return { code: 200, msg: '已删除' }
     }
 

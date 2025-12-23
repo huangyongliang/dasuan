@@ -45,13 +45,20 @@
 .shout-container {
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 80rpx - 90px); /* Adjust height to match input area bottom */
+  /* 
+    Height calculation: 
+    100vh - 80rpx (Tab Header) - 90px (Input Area Bottom) - 100rpx (Input Area Height)
+    This ensures the scroll container ends right above the input area.
+  */
+  height: calc(100vh - 80rpx - 90px - 100rpx); 
   background: #f6f6f6;
 }
 
 .chat-list {
   flex: 1;
   padding: 20rpx;
+  /* Add padding-bottom to ensure last message is clearly visible above any potential visual overlap */
+  padding-bottom: 40rpx; 
   box-sizing: border-box;
   overflow-y: auto;
 }
