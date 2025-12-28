@@ -16,24 +16,6 @@
     </view>
   </view>
 
-  <view class="section-title" wx:if="{{isAdmin}}">待审核笔记</view>
-  
-  <view class="audit-list" wx:if="{{isAdmin}}">
-    <block wx:if="{{pendingNotes.length === 0}}">
-      <view class="empty-tip">暂无待审核内容</view>
-    </block>
-    <block wx:else>
-      <view class="audit-item" wx:for="{{pendingNotes}}" wx:key="_id" bindtap="auditNote" data-id="{{item._id}}" data-index="{{index}}">
-        <view class="audit-content">
-          <text wx:if="{{item.status === 'pending_delete'}}" style="color:red; font-weight:bold;">[申请删除] </text>
-          {{item.content}}
-        </view>
-        <view class="audit-time">{{item.createTime}}</view>
-        <view class="audit-action">{{item.status === 'pending_delete' ? '审核删除' : '审核发布'}}</view>
-      </view>
-    </block>
-  </view>
-
   <view class="about-section">
     <text>大蒜助手 v1.0.0</text>
   </view>

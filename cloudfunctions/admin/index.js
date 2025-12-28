@@ -30,35 +30,6 @@ exports.main = async (event, context) => {
     return { code: 200, isAdmin: true }
   }
 
-  if (action === 'getPending') {
-    const dbCmd = db.command
-    return await db.collection('notes')
-      .where({
-        status: dbCmd.in(['pending', 'pending_delete']) // 同时获取待发布和待删除的
-      })
-      .orderBy('createTime', 'desc')
-      .get()
-  }
-
-  if (action === 'audit') {
-    if (!noteId || !status) return { code: 400, msg: 'Missing params' }
-    
-    // 如果是删除申请被通过，则执行物理删除
-    if (status === 'deleted') {
-       await db.collection('notes').doc(noteId).remove()
-       return { code: 200, msg: 'Deleted' }
-    }
-
-    // 否则更新状态
-    return await db.collection('notes').doc(noteId).update({
-      data: {
-        status: status,
-        auditTime: db.serverDate(),
-        auditor: wxContext.OPENID
-      }
-    })
-  }
-
   return {
     code: 400,
     msg: 'Unknown action'

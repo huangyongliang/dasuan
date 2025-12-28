@@ -7,12 +7,7 @@ Component({
       pagePath: "/pages/index/index",
       iconPath: "/images/note.png",
       selectedIconPath: "/images/note-active.png",
-      text: "笔记"
-    }, {
-      pagePath: "/pages/editor/editor",
-      iconPath: "/images/add.png",
-      selectedIconPath: "/images/add-active.png",
-      text: "新建"
+      text: "天气"
     }, {
       pagePath: "/pages/profile/profile",
       iconPath: "/images/profile.png",
