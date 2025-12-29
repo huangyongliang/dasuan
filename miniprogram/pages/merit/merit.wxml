@@ -1,0 +1,68 @@
+<!--pages/merit/merit.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="merit-count">
+      <text class="label">本次功德</text>
+      <text class="number session">{{sessionCount}}</text>
+      <text class="label total">总功德: {{count}}</text>
+    </view>
+    <view class="rank-btn" bindtap="showRank">
+      排行榜
+    </view>
+  </view>
+
+  <view class="wooden-fish-container" bindtap="onTapWoodenFish">
+    <!-- 木鱼主体 -->
+    <view class="wooden-fish {{isAnimating ? 'animate' : ''}}">
+      <view class="fish-body">
+        <view class="fish-eye"></view>
+        <view class="fish-mouth"></view>
+      </view>
+      <view class="fish-handle"></view>
+    </view>
+    
+    <!-- 功德+1 浮动文字 -->
+    <view class="merit-plus {{isPlusAnimating ? 'float-up' : ''}}" wx:if="{{showPlusOne}}">
+      功德 +1
+    </view>
+  </view>
+
+  <view class="tip-text">点击积攒功德</view>
+
+  <!-- 排行榜弹窗 -->
+  <page-container 
+    show="{{showRankModal}}" 
+    round="true" 
+    overlay="true" 
+    position="bottom" 
+    bind:clickoverlay="hideRank"
+    custom-style="height: 60%;"
+  >
+    <view class="rank-modal">
+      <view class="rank-header">
+        <text class="rank-title">功德排行榜</text>
+        <view class="close-btn" bindtap="hideRank">×</view>
+      </view>
+      
+      <scroll-view scroll-y="true" class="rank-list">
+        <view class="rank-item" wx:for="{{rankList}}" wx:key="_id">
+          <view class="rank-num {{index < 3 ? 'top-' + (index + 1) : ''}}">{{index + 1}}</view>
+          <view class="rank-user">{{item.nickname || '神秘人'}}</view>
+          <view class="rank-score">{{item.count}}</view>
+        </view>
+      </scroll-view>
+
+      <view class="my-rank">
+        <view class="rank-num">我</view>
+        <view class="rank-user" bindtap="editNickname">
+          {{myRank.nickname || '神秘人'}} <text style="font-size: 20rpx; color: #999;">(剃度获取新法号)</text>
+        </view>
+        <view class="rank-score">{{myRank.count}}</view>
+      </view>
+    </view>
+  </page-container>
+  
+  <modal hidden="{{!showNicknameModal}}" title="赐法号" confirm-text="领受" cancel-text="尘缘未了" bindcancel="hideNicknameModal" bindconfirm="updateNickname">
+    <input class="nickname-input" placeholder="请输入新法号" bindinput="onNicknameInput" value="{{tempNickname}}"/>
+  </modal>
+</view>

@@ -9,6 +9,11 @@ Component({
       selectedIconPath: "/images/note-active.png",
       text: "天气"
     }, {
+      pagePath: "/pages/merit/merit",
+      iconPath: "/images/merit.png",
+      selectedIconPath: "/images/merit-active.png",
+      text: "功德"
+    }, {
       pagePath: "/pages/profile/profile",
       iconPath: "/images/profile.png",
       selectedIconPath: "/images/profile-active.png",

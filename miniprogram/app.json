@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/merit/merit",
     "pages/profile/profile"
   ],
   "window": {
@@ -22,6 +23,12 @@
         "text": "天气",
         "iconPath": "images/note.png",
         "selectedIconPath": "images/note-active.png"
+      },
+      {
+        "pagePath": "pages/merit/merit",
+        "text": "功德",
+        "iconPath": "images/merit.png",
+        "selectedIconPath": "images/merit-active.png"
       },
       {
         "pagePath": "pages/profile/profile",
